@@ -12,6 +12,21 @@ namespace App\Controller;
 class FavoritesController extends AppController
 {
     /**
+     * Initialization hook method.
+     *
+     * @return void
+     */
+    public function initialize(): void
+    {
+        parent::initialize();
+        try {
+            $this->loadComponent('RequestHandler');
+        } catch (\Exception $e) {
+            die($e->getMessage());
+        }
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
@@ -24,6 +39,7 @@ class FavoritesController extends AppController
         $favorites = $this->paginate($this->Favorites);
 
         $this->set(compact('favorites'));
+        $this->viewBuilder()->setOption('serialize', ['favorites']);
     }
 
     /**
@@ -40,6 +56,7 @@ class FavoritesController extends AppController
         ]);
 
         $this->set(compact('favorite'));
+        $this->viewBuilder()->setOption('serialize', ['favorite']);
     }
 
     /**

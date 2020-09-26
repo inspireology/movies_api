@@ -12,6 +12,21 @@ namespace App\Controller;
 class MoviesController extends AppController
 {
     /**
+     * Initialization hook method.
+     *
+     * @return void
+     */
+    public function initialize(): void
+    {
+        parent::initialize();
+        try {
+            $this->loadComponent('RequestHandler');
+        } catch (\Exception $e) {
+            die($e->getMessage());
+        }
+    }
+
+    /**
      * Index method
      *
      * @return \Cake\Http\Response|null|void Renders view
@@ -24,6 +39,7 @@ class MoviesController extends AppController
         $movies = $this->paginate($this->Movies);
 
         $this->set(compact('movies'));
+        $this->viewBuilder()->setOption('serialize', ['movies']);
     }
 
     /**
@@ -40,6 +56,7 @@ class MoviesController extends AppController
         ]);
 
         $this->set(compact('movie'));
+        $this->viewBuilder()->setOption('serialize', ['movie']);
     }
 
     /**

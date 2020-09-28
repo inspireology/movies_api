@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 
 /**
@@ -40,6 +41,7 @@ class MoviesController extends AppController
         $this->paginate = [
             'contain' => ['Ratings', 'Directors', 'Genres'],
         ];
+
         $movies = $this->paginate($this->Movies);
 
         $this->set(compact('movies'));
@@ -55,9 +57,12 @@ class MoviesController extends AppController
      */
     public function view($id = null)
     {
-        $movie = $this->Movies->get($id, [
-            'contain' => ['Ratings', 'Directors', 'Genres', 'Casts', 'Favorites'],
-        ]);
+        try {
+            $movie = $this->Movies->get($id, [ 'contain' => ['Ratings', 'Directors', 'Genres', 'Casts', 'Favorites'], ]);
+        } catch (RecordNotFoundException $exception) {
+            $this->ApiResponse->errorRowNotFoundResponse();
+            return;
+        }
 
         $this->set(compact('movie'));
         $this->viewBuilder()->setOption('serialize', ['movie']);
@@ -157,8 +162,7 @@ class MoviesController extends AppController
     {
         $this->RequestHandler->renderAs($this, 'json'); // Force all requests to return a json response.
         if ($this->ApiKeyAuthorize->authorize()) { // Check API key is valid and enabled
-           echo 'ApiKey Invalid'; // exit here
-           // TODO: return a response and do not return any data
+            // TODO: return a response and do not return any data
         }
     }
 }

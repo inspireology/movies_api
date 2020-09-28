@@ -21,8 +21,10 @@ class MoviesController extends AppController
     public function initialize(): void
     {
         parent::initialize();
+
         try {
             $this->loadComponent('RequestHandler');
+            $this->loadComponent('ApiKeyAuthorize');
         } catch (\Exception $e) {
             die($e->getMessage());
         }
@@ -153,6 +155,10 @@ class MoviesController extends AppController
      */
     public function beforeFilter(EventInterface $event)
     {
-        $this->RequestHandler->renderAs($this, 'json');
+        $this->RequestHandler->renderAs($this, 'json'); // Force all requests to return a json response.
+        if ($this->ApiKeyAuthorize->authorize()) { // Check API key is valid and enabled
+           echo 'ApiKey Invalid'; // exit here
+           // TODO: return a response and do not return any data
+        }
     }
 }

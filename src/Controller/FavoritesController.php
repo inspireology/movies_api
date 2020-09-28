@@ -18,9 +18,9 @@ class FavoritesController extends AppController
      */
     public function initialize(): void
     {
-        parent::initialize();
         try {
             $this->loadComponent('RequestHandler');
+            $this->loadComponent('ApiKeyAuthorize');
         } catch (\Exception $e) {
             die($e->getMessage());
         }
@@ -133,6 +133,7 @@ class FavoritesController extends AppController
      */
     public function beforeFilter(EventInterface $event)
     {
-        $this->RequestHandler->renderAs($this, 'json');
+        $this->RequestHandler->renderAs($this, 'json'); // Force all requests to return a json response.
+        $this->ApiKeyAuthorize->authorize(); // Check API key is valid and enabled
     }
 }

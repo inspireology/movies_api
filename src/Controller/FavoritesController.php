@@ -126,4 +126,13 @@ class FavoritesController extends AppController
 
         return $this->redirect(['action' => 'index']);
     }
+
+    /**
+     * @param EventInterface $event
+     * @return \Cake\Http\Response|void|null
+     */
+    public function beforeFilter(EventInterface $event)
+    {
+        $this->RequestHandler->renderAs($this, 'json');
+    }
 }

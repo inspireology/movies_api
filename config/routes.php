@@ -45,38 +45,23 @@ use Cake\Routing\RouteBuilder;
 $routes->setRouteClass(DashedRoute::class);
 
 $routes->scope('/', function (RouteBuilder $builder) {
-    $builder->setExtensions(['json']);
 
-    // Enable REST responses for the specified controller
-    $builder->resources('Movies');
-    $builder->resources('Favorites');
+    $builder->get('/movie/{id}', ['controller' => 'Movies', 'action' => 'view'])
+        ->setPatterns(['id' => '\d+']) // Only accept integer arguments
+        ->setPass(['id']); // Pass id parameter to the controller
 
-    /*
-     * Here, we are connecting '/' (base path) to a controller called 'Pages',
-     * its action called 'display', and we pass a param to select the view file
-     * to use (in this case, templates/Pages/home.php)...
-     */
-    $builder->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+    // Return most popular movies or movies that have been searched for based on search string
+    $builder->get('/movies/*', ['controller' => 'Movies', 'action' => 'searchOrFindPopular']);
 
-    /*
-     * ...and connect the rest of 'Pages' controller's URLs.
-     */
-    $builder->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    // Return all of the users previous favorites
+    $builder->get('/favorites', ['controller' => 'favorites', 'action' => 'findAllUserFavorites']);
 
-    /*
-     * Connect catchall routes for all controllers.
-     *
-     * The `fallbacks` method is a shortcut for
-     *
-     * ```
-     * $builder->connect('/:controller', ['action' => 'index']);
-     * $builder->connect('/:controller/:action/*', []);
-     * ```
-     *
-     * You can remove these routes once you've connected the
-     * routes you want in your application.
-     */
-    $builder->fallbacks();
+    // Add a favorite to the movie of id
+    $builder->post('/favorite/{id}', ['controller' => 'Movies', 'action' => 'add'])
+        ->setPatterns(['id' => '\d+']) // Only accept integer arguments
+        ->setPass(['id']);
+
+    // TODO: Return errors for all other requests
 });
 
 /*

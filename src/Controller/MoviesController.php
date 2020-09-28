@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Event\EventInterface;
+
 /**
  * Movies Controller
  *
@@ -127,5 +129,30 @@ class MoviesController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    /**
+     * Search using the 'search' query parameter or find most popular movies
+     */
+    public function searchOrFindPopular()
+    {
+
+    }
+
+    /**
+     * Final all of the users previous favorites
+     */
+    public function findAllUserFavorites()
+    {
+
+    }
+
+    /**
+     * @param EventInterface $event
+     * @return \Cake\Http\Response|void|null
+     */
+    public function beforeFilter(EventInterface $event)
+    {
+        $this->RequestHandler->renderAs($this, 'json');
     }
 }

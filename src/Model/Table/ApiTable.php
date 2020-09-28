@@ -77,4 +77,16 @@ class ApiTable extends Table
 
         return $validator;
     }
+
+    public function isValidApiKey(String $apiKey)
+    {
+        $keyResult = $this
+            ->find()
+            ->select(['id'])
+            ->where(['api_key =' => $apiKey])
+            ->and(['is_enabled' => 1])
+            ->count();
+
+        return $keyResult ? true : false;
+    }
 }

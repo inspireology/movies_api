@@ -133,6 +133,8 @@ class FavoritesController extends AppController
      */
     public function beforeFilter(EventInterface $event)
     {
+        parent::beforeFilter($event);
+
         $this->ApiKeyAuthorize->authorize(); // Check API key is valid and enabled
     }
 }

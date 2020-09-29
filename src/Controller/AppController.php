@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\EventInterface;
 
 /**
  * Application Controller
@@ -50,5 +51,19 @@ class AppController extends Controller
          * see https://book.cakephp.org/4/en/controllers/components/form-protection.html
          */
         //$this->loadComponent('FormProtection');
+    }
+
+    public function invalidEndPoint(): void
+    {
+        $this->ApiResponse->errorApiEndpointNotFoundResponse();
+    }
+
+    /**
+     * @param EventInterface $event
+     * @return \Cake\Http\Response|void|null
+     */
+    public function beforeFilter(EventInterface $event)
+    {
+        $this->RequestHandler->renderAs($this, 'json'); // Force all requests to return a json response.
     }
 }

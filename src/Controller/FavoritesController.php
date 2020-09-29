@@ -133,7 +133,6 @@ class FavoritesController extends AppController
      */
     public function beforeFilter(EventInterface $event)
     {
-        $this->RequestHandler->renderAs($this, 'json'); // Force all requests to return a json response.
         $this->ApiKeyAuthorize->authorize(); // Check API key is valid and enabled
     }
 }

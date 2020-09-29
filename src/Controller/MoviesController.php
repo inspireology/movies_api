@@ -160,7 +160,6 @@ class MoviesController extends AppController
      */
     public function beforeFilter(EventInterface $event)
     {
-        $this->RequestHandler->renderAs($this, 'json'); // Force all requests to return a json response.
         if ($this->ApiKeyAuthorize->authorize()) { // Check API key is valid and enabled
             // TODO: return a response and do not return any data
         }

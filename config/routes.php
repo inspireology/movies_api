@@ -62,6 +62,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
         ->setPass(['id']);
 
     // TODO: Return errors for all other requests
+    $builder->connect('/*', ['controller' => 'App', 'action' => 'invalidEndPoint']);
 });
 
 /*

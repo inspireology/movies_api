@@ -58,7 +58,7 @@ class MoviesController extends AppController
     public function view($id = null)
     {
         try {
-            $movie = $this->Movies->get($id, [ 'contain' => ['Ratings', 'Directors', 'Genres', 'Casts', 'Favorites'], ]);
+            $movie = $this->Movies->get($id, [ 'contain' => ['Ratings', 'Directors', 'Genres', 'Casts' => ['Actors'], 'Favorites' => ['Users']]]);
         } catch (RecordNotFoundException $exception) {
             $this->ApiResponse->errorRowNotFoundResponse();
             return;

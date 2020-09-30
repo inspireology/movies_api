@@ -20,6 +20,8 @@ class ApiKeyAuthorizeComponent extends Component
         $controller = $this->getController();
         $apiTable = $controller->getTableLocator()->get('Api');
 
-        return $apiTable->isValidApiKey($apiKey);
+        if(!$apiTable->isValidApiKey($apiKey)) {
+            $controller->setAction('invalidApiKey');
+        }
     }
 }

@@ -208,7 +208,6 @@ class MoviesController extends AppController
         $this->viewBuilder()->setOption('serialize', ['movies']);
     }
 
-
     /**
      * @param EventInterface $event
      * @return \Cake\Http\Response|void|null
@@ -216,9 +215,6 @@ class MoviesController extends AppController
     public function beforeFilter(EventInterface $event)
     {
         parent::beforeFilter($event);
-
-        if ($this->ApiKeyAuthorize->authorize()) { // Check API key is valid and enabled
-            // TODO: return a response and do not return any data
-        }
+        $this->ApiKeyAuthorize->authorize();
     }
 }

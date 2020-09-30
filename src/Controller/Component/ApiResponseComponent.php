@@ -61,7 +61,7 @@ class ApiResponseComponent extends Component
         $this->controller->viewBuilder()->setOption('serialize', ['message']);
     }
 
-    public function apiKeyInvalidResponse()
+    public function errorApiKeyInvalidResponse()
     {
         $error = 'ERROR_API_KEY_INVALID';
         $message = "The specified API Key is not valid.";

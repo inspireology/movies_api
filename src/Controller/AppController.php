@@ -62,6 +62,11 @@ class AppController extends Controller
         $this->ApiResponse->errorApiEndpointNotFoundResponse();
     }
 
+    public function invalidApiKey(): void
+    {
+        $this->ApiResponse->errorApiKeyInvalidResponse();
+    }
+
     /**
      * @param EventInterface $event
      * @return \Cake\Http\Response|void|null

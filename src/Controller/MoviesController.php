@@ -203,25 +203,7 @@ class MoviesController extends AppController
      */
     public function searchByPopularity()
     {
-        $query = $this->Movies->find();
-
-        $query->select([
-            'id' => 'm.id',
-            'title' => 'm.title',
-            'description' => 'm.description',
-            'favorites_count' => 'count(f.id)',
-        ])
-            ->from('movies AS m')
-            ->join([
-                'table' => 'favorites',
-                'alias' => 'f',
-                'type' => 'inner',
-                'conditions' => 'm.id = f.movie_id'
-            ])
-            ->group(['m.id'])
-            ->order(['favorites_count' => 'DESC']);
-
-        $movies = $query->all();
+        $movies = $this->Movies->searchByPopularity();
         $this->set(compact('movies'));
         $this->viewBuilder()->setOption('serialize', ['movies']);
     }

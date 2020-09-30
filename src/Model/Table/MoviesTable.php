@@ -111,4 +111,26 @@ class MoviesTable extends Table
 
         return $rules;
     }
+
+    public function searchByPopularity($sort = 'DESC')
+    {
+        $movies = $this->find()->select([
+            'id' => 'm.id',
+            'title' => 'm.title',
+            'description' => 'm.description',
+            'favorites_count' => 'count(f.id)',
+        ])
+            ->from('movies AS m')
+            ->join([
+                'table' => 'favorites',
+                'alias' => 'f',
+                'type' => 'inner',
+                'conditions' => 'm.id = f.movie_id'
+            ])
+            ->group(['m.id'])
+            ->order(['favorites_count' => $sort]);
+
+        $movies->all();
+        return $movies;
+    }
 }

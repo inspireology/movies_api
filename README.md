@@ -308,9 +308,7 @@ Inspecting the database shows that the favorite was added successfully.
 - CSRF is not an issue. I have disabled CSRF protection to make using simple curl requests more straightforward when you are testing.
 
 # Testing
-  - Test database
-  - PHPUnit
-  - Created tests
+The majority of the testing was done using manual integration tests. The project defintely needs more unit test coverage if it were to be used professionally.
 
 # What is missing?
 - For now this is a read only API but later on in the UI development I will add writing of create and read as it will be needs
@@ -318,6 +316,9 @@ Inspecting the database shows that the favorite was added successfully.
 - Far more extensive tests
 - There is far more unit testing that could be done to verify that the methods behave as expected.
 - Also integration testing is key
+
+# Demo
+If time permits, I will put a demo of the API up at https://moviesapi.inspireology.com by tomorrow morning (Oct 1st) that you can query. I will contact Calvin Caleb as soon as I have done this.
 
 # Install
 You will need to have php 7.2 and MySQL 5.7 installed.

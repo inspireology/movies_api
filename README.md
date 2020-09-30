@@ -25,15 +25,15 @@
   - I designed the schema and used the mockaroo web application to generate mock data
 
   Tables:
-    **actors** - actors who star in movies
-    **api** - api keys and accounts
-    **casts** - roles each actor has in a movie
-    **directors** - directors of movies
-    **favorites** - user favorites of movies
-    **genres** - genres that a movie can belong to (action/romance/drama/musical...)
-    **movies** - all movies
-    **ratings** - age restricted ratings for movies
-    **users** - users using the application (ie: a logged in customer)
+   - **actors** - actors who star in movies
+   - **api** - api keys and accounts
+   - **casts** - roles each actor has in a movie
+   - **directors** - directors of movies
+   - **favorites** - user favorites of movies
+   - **genres** - genres that a movie can belong to (action/romance/drama/musical...)
+   - **movies** - all movies
+   - **ratings** - age restricted ratings for movies
+   - **users** - users using the application (ie: a logged in customer)
 
 The structure of the data will be more apparent when viewing the API responses
 
@@ -308,14 +308,32 @@ Inspecting the database shows that the favorite was added successfully.
 - CSRF is not an issue. I have disabled CSRF protection to make using simple curl requests more straightforward when you are testing.
 
 # Testing
-The majority of the testing was done using manual integration tests. The project defintely needs more unit test coverage if it were to be used professionally.
+The majority of the testing was done using manual integration tests.
+The project definitely needs more unit test coverage if it were to be used professionally. The behaviors for the search
+APIKeyComponent, ApiResponse, Search, get favorites, add favorites need tests to have their behavior and errors well defined in unit tests.
+
+You can run the basic unit tests with if you have PHPUnit installed:
+```bash
+./vendor/phpunit/phpunit/phpunit --configuration ./phpunit.xml.dist --teamcity --cache-result-file=/Users/inspireology/Desktop/_Developer/MonstarLab/monstarlab_movies/.phpunit.result.cache
+```
 
 # What is missing?
-- For now this is a read only API but later on in the UI development I will add writing of create and read as it will be needs
 - Make error message more informative
 - Far more extensive tests
 - There is far more unit testing that could be done to verify that the methods behave as expected.
 - Also integration testing is key
+- It was not requested but I would normally prefix the path with a version number ie: /v1/movie/{id}.
+
+## Security
+- I would disable the error messages when deploying non locally (disable debugkit middleware)
+    - This should also increase performance.
+- Salt and hash API keys and passwords.
+- Enable CSRF forgery protection (disabled during development)
+- Enable https
+
+## Performance
+- It would be performant to do less joins then there currently are as all queries do not need all of their associated tables
+    - That can be determined in during further development as what is needed becomes clear
 
 # Demo
 If time permits, I will put a demo of the API up at https://moviesapi.inspireology.com by tomorrow morning (Oct 1st) that you can query. I will contact Calvin Caleb as soon as I have done this.
@@ -324,7 +342,6 @@ If time permits, I will put a demo of the API up at https://moviesapi.inspireolo
 You will need to have php 7.2 and MySQL 5.7 installed.
 
 ## Configuration
-
 Read and edit the environment specific `config/app_local.example.php` and setup the
 `'Datasources'` 'default' connection to point to a database that you have created. Then import   `config/schema/movies/movies.sql` into your MySQL database. You can do the same with the 'test' connection.
 

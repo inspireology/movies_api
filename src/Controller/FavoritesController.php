@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Event\EventInterface;
+
 /**
  * Favorites Controller
  *
@@ -21,6 +24,7 @@ class FavoritesController extends AppController
         try {
             $this->loadComponent('RequestHandler');
             $this->loadComponent('ApiKeyAuthorize');
+            $this->loadComponent('ApiResponse');
         } catch (\Exception $e) {
             die($e->getMessage());
         }
@@ -64,21 +68,36 @@ class FavoritesController extends AppController
      *
      * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add($movieId = null)
     {
         $favorite = $this->Favorites->newEmptyEntity();
-        if ($this->request->is('post')) {
-            $favorite = $this->Favorites->patchEntity($favorite, $this->request->getData());
-            if ($this->Favorites->save($favorite)) {
-                $this->Flash->success(__('The favorite has been saved.'));
+        $userId = $this->request->getHeaderLine('USER-ID');
 
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The favorite could not be saved. Please, try again.'));
+        if (!(is_numeric($userId))) {
+            $this->ApiResponse->errorFavoriteAddFailure("user_id is non-integer in header. Favorite could not be added");
+            return;
         }
-        $users = $this->Favorites->Users->find('list', ['limit' => 200]);
-        $movies = $this->Favorites->Movies->find('list', ['limit' => 200]);
-        $this->set(compact('favorite', 'users', 'movies'));
+
+        if (!(is_numeric($movieId))) {
+            $this->ApiResponse->errorFavoriteAddFailure("movie_id is non-integer. Favorite could not be added_");
+            return;
+        }
+
+        $isValidUser = $this->getTableLocator()->get('Users')->findById($userId)->count();
+        $isValidMovie = $this->getTableLocator()->get('Movies')->findById($movieId)->count();
+
+        if (!($isValidMovie && $isValidUser)) {
+            $this->ApiResponse->errorFavoriteAddFailure("user_id and movie_id must be valid entries in the database");
+            return;
+        }
+
+        $favorite = $this->Favorites->patchEntity($favorite, ['user_id' => $userId, 'movie_id' => $movieId]);
+
+        if ($this->Favorites->save($favorite)) {
+            $this->ApiResponse->okSaveSuccessful();
+        } else {
+            $this->ApiResponse->errorFavoriteAddFailure("An unknown error has occured while saving");
+        }
     }
 
     /**
@@ -135,6 +154,9 @@ class FavoritesController extends AppController
     {
         parent::beforeFilter($event);
 
-        $this->ApiKeyAuthorize->authorize(); // Check API key is valid and enabled
+        if ($this->ApiKeyAuthorize->authorize()) { // Check API key is valid and enabled
+            // TODO: return a response and do not return any data
+        }
     }
+
 }

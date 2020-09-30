@@ -54,12 +54,12 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->get('/movies/*', ['controller' => 'Movies', 'action' => 'searchOrFindPopular']);
 
     // Return all of the users previous favorites
-    $builder->get('/favorites', ['controller' => 'favorites', 'action' => 'findAllUserFavorites']);
+    $builder->get('/favorites', ['controller' => 'Favorites', 'action' => 'findAllUserFavorites']);
 
     // Add a favorite to the movie of id
-    $builder->post('/favorite/{id}', ['controller' => 'Movies', 'action' => 'add'])
-        ->setPatterns(['id' => '\d+']) // Only accept integer arguments
-        ->setPass(['id']);
+    $builder->connect('/favorite/{movieId}', ['controller' => 'Favorites', 'action' => 'add'])
+        ->setPatterns(['movieId' => '\d+']) // Only accept integer arguments
+        ->setPass(['movieId']);
 
     // TODO: Return errors for all other requests
     $builder->connect('/*', ['controller' => 'App', 'action' => 'invalidEndPoint']);

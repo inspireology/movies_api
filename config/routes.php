@@ -57,7 +57,7 @@ $routes->scope('/', function (RouteBuilder $builder) {
     $builder->get('/favorites', ['controller' => 'Favorites', 'action' => 'findAllUserFavorites']);
 
     // Add a favorite to the movie of id
-    $builder->connect('/favorite/{movieId}', ['controller' => 'Favorites', 'action' => 'add'])
+    $builder->post('/favorite/{movieId}', ['controller' => 'Favorites', 'action' => 'add'])
         ->setPatterns(['movieId' => '\d+']) // Only accept integer arguments
         ->setPass(['movieId']);
 

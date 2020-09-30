@@ -30,6 +30,18 @@ class FavoritesController extends AppController
         }
     }
 
+    public function findAllUserFavorites()
+    {
+        $userId = $this->request->getHeaderLine('USER-ID');
+
+        $query = $this->Favorites->find()->where(['user_id' => $userId]);
+        $query->contain(['Movies']);
+        $userFavorites = $query->all();
+
+        $this->set(compact('userFavorites'));
+        $this->viewBuilder()->setOption('serialize', ['userFavorites']);
+    }
+
     /**
      * Index method
      *

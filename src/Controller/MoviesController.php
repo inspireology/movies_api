@@ -58,7 +58,7 @@ class MoviesController extends AppController
     public function view($id = null)
     {
         try {
-            $movie = $this->Movies->get($id, [ 'contain' => ['Ratings', 'Directors', 'Genres', 'Casts' => ['Actors'], 'Favorites' => ['Users']]]);
+            $movie = $this->Movies->get($id, ['contain' => ['Ratings', 'Directors', 'Genres', 'Casts' => ['Actors'], 'Favorites' => ['Users']]]);
         } catch (RecordNotFoundException $exception) {
             $this->ApiResponse->errorRowNotFoundResponse();
             return;
@@ -143,16 +143,89 @@ class MoviesController extends AppController
      */
     public function searchOrFindPopular()
     {
+        $searchQuery = $this->request->getQuery('search');
 
+        if ($searchQuery) {
+            $this->searchBySearchQuery($searchQuery);
+        } else {
+            $this->searchByPopularity();
+        }
     }
 
     /**
-     * Final all of the users previous favorites
+     * @param $searchQuery string A url encoded, json encoded string of search parameters
      */
-    public function findAllUserFavorites()
+    public function searchBySearchQuery($searchQuery)
     {
+        // TODO: This logic should be moved in to a component as skinny controllers are good
+        $searchParameters = json_decode(urldecode($searchQuery));
 
+        $query = $this->Movies->find();
+
+        // filter by words in title
+        if (property_exists($searchParameters, 'title_has_words')) {
+            foreach ($searchParameters->title_has_words as $searchTitleWord) {
+                $query->where(['title LIKE' => "%$searchTitleWord%"]);
+            }
+        }
+
+        // filter by words in description
+        if (property_exists($searchParameters, 'description_has_words')) {
+            foreach ($searchParameters->title_has_words as $searchDescriptionWord) {
+                $query->where(['description LIKE' => "%$searchDescriptionWord%"]);
+            }
+        }
+
+        // filter by the age restriction rating (see rating table for value)
+        if (property_exists($searchParameters, 'rating_id')) {
+            $query->where(['rating_id' => $searchParameters->rating_id]);
+        }
+
+        // filter by duration in seconds (longer than)
+        if (property_exists($searchParameters, 'duration_longer_than')) {
+            $query->where(['duration >' => $searchParameters->duration_longer_than]);
+        }
+
+        // filter by duration in seconds (shorter than)
+        if (property_exists($searchParameters, 'duration_longer_than')) {
+            $query->where(['duration >' => $searchParameters->duration_shorter_than]);
+        }
+
+        // Additional search filters can be added here
+
+        $movies = $query->all();
+        $this->set(compact('movies'));
+        $this->viewBuilder()->setOption('serialize', ['movies']);
     }
+
+    /**
+     * Search for movies by how many likes they have
+     */
+    public function searchByPopularity()
+    {
+        $query = $this->Movies->find();
+
+        $query->select([
+            'id' => 'm.id',
+            'title' => 'm.title',
+            'description' => 'm.description',
+            'favorites_count' => 'count(f.id)',
+        ])
+            ->from('movies AS m')
+            ->join([
+                'table' => 'favorites',
+                'alias' => 'f',
+                'type' => 'inner',
+                'conditions' => 'm.id = f.movie_id'
+            ])
+            ->group(['m.id'])
+            ->order(['favorites_count' => 'DESC']);
+
+        $movies = $query->all();
+        $this->set(compact('movies'));
+        $this->viewBuilder()->setOption('serialize', ['movies']);
+    }
+
 
     /**
      * @param EventInterface $event

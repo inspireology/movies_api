@@ -1,6 +1,6 @@
 # MonstarLab - Movies
 
-- This API is implemented using CakePHP 4.1, MySQL 5.7 and PHP
+- This API is implemented using CakePHP 4.1, MySQL 5.7 and PHP 7.2
 
 ## Implementation Overview
 
